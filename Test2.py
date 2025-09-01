@@ -57,13 +57,19 @@ def scrape_doctolib(query, location):
     )
     place_input.clear()
     place_input.send_keys(location)
+    time.sleep(1)
+    place_input.send_keys(Keys.ENTER)
     place_input.send_keys(Keys.ENTER)
 
-    # wait.until(
-    #     EC.text_to_be_present_in_element_value((By.CSS_SELECTOR, "input.searchbar-input.searchbar-place-input"), location)
-    # )
-    # place_input.send_keys(Keys.ENTER)
+
+    time.sleep(1) # attendre chargement
     
+
+    place_input2 = wait.until(
+    EC.presence_of_element_located((By.XPATH, "//button[.//span[normalize-space()='Filtres']]"))
+)
+    place_input2.click()
+
     time.sleep(60)
  
 
