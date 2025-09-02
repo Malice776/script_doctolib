@@ -70,8 +70,58 @@ def scrape_doctolib(query, location):
 )
     place_input2.click()
 
-    time.sleep(60)
- 
+    #liste des filstres
+        time.sleep(1)
+        
+        time.sleep(60)
+    results = []
+    doctors = driver.find_elements(By.CSS_SELECTOR, "div.dl-search-result")[:max_results]
+
+    for doc in doctors:
+        try:
+            name = doc.find_element(By.CSS_SELECTOR, "h3.dl-search-result-name").text
+            try:
+                availability = doc.find_element(By.CSS_SELECTOR, ".dl-search-result-availability").text
+            except:
+                availability = "Non dispo"
+            consultation_type = "Vidéo" if "vidéo" in doc.text.lower() else "Sur place"
+            try:
+                sector = doc.find_element(By.CSS_SELECTOR, ".dl-search-result-sector").text
+            except:
+                sector = "Non précisé"
+            try:
+                price = doc.find_element(By.CSS_SELECTOR, ".dl-search-result-price").text
+            except:
+                price = "N/A"
+            try:
+                address = doc.find_element(By.CSS_SELECTOR, ".dl-text.dl-text-body.dl-text-regular").text
+            except:
+                address = "Non précisée"
+
+            # Appliquer filtres manuels Python (ex : prix ou adresse)
+            if price != "N/A":
+                try:
+                    price_val = int(price.split("€")[0].strip())
+                    if (price_min and price_val < price_min) or (price_max and price_val > price_max):
+                        continue
+                except:
+                    pass
+            if address_filter and address_filter.lower() not in address.lower():
+                continue
+
+            results.append({
+                "Nom": name,
+                "Disponibilité": availability,
+                "Consultation": consultation_type,
+                "Secteur": sector,
+                "Prix": price,
+                "Adresse": address,
+            })
+        except:
+            continue
+
+    driver.quit()
+    return results
 
 
 if __name__ == "__main__":
