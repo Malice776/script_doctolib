@@ -98,7 +98,7 @@ def scrape_doctolib(query, location):
             except:
                 address = "Non précisée"
 
-            # Appliquer filtres manuels Python (ex : prix ou adresse)
+            
             if price != "N/A":
                 try:
                     price_val = int(price.split("€")[0].strip())
