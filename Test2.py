@@ -23,7 +23,7 @@ def save_csv(data, filename="doctolib.csv"):
         writer.writerows(data)
 
 
-def scrape_doctolib(query, location, max_results, start_date, end_date,
+def scrape_doctolib(query, location, max_results, language, disponibility,
                     assurance, consultation, price_min, price_max, address_filter): 
 
 
@@ -87,11 +87,11 @@ def scrape_doctolib(query, location, max_results, start_date, end_date,
         try:
             if disponibility.lower() == "aujourd'hui":
                 wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2k:']"))).click()
-            elif disponibility.lower() == "dans les 3 prochains jours":
+            elif disponibility.lower() == "3":
                 wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2l:']"))).click()
-            elif disponibility.lower() == "dans les 7 prochains joure":
+            elif disponibility.lower() == "7":
                 wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2m:']"))).click()
-            elif disponibility.lower() == "dans les 14 prochains joure":
+            elif disponibility.lower() == "14":
                 wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2n:']"))).click()   
         except Exception as e:
             print(f"Erreur en sélectionnant la disponibilité : {e}")
@@ -106,6 +106,17 @@ def scrape_doctolib(query, location, max_results, start_date, end_date,
                 wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r30:']"))).click()
             elif language.lower() == "Espagnol":
                 wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2t:']"))).click()   
+        except Exception as e:
+            print(f"Erreur en sélectionnant la disponibilité : {e}")
+
+    if consultation:
+        try:
+            if consultation.lower() == "visio":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r3b:']"))).click()
+            else :
+                wait.until(EC.element_to_be_clickable((By.CSS, "button.Tappable-inactive.dl-button-primary.dl-button.dl-button-size-medium"))).click()
+                pass
+              
         except Exception as e:
             print(f"Erreur en sélectionnant la disponibilité : {e}")
 
@@ -236,8 +247,10 @@ if __name__ == "__main__":
     parser.add_argument("--query", required=True, help="Requête médicale (ex: dermatologue)")
     parser.add_argument("--location", required=True, help="Lieu de recherche (ex: 75015, Paris)")
     parser.add_argument("--max", type=int, default=10, help="Nombre max de médecins")
-    parser.add_argument("--start", help="Date début (JJ/MM/AAAA)")
-    parser.add_argument("--end", help="Date fin (JJ/MM/AAAA)")
+    parser.add_argument("--disponibility", choices=["Aujourd'hui", "3", "7","14"], help="aujourd'hui / 3 / 7 / 14 jours")
+    parser.add_argument("--language", choices=["Francais", "Anglais", "Allemand","Espagnol"], help="la langue parlée par le médecin")
+    # parser.add_argument("--start", help="Date début (JJ/MM/AAAA)")
+    # parser.add_argument("--end", help="Date fin (JJ/MM/AAAA)")
     parser.add_argument("--assurance", choices=["secteur 1", "secteur 2", "non conventionné"], help="Type d'assurance")
     parser.add_argument("--consultation", choices=["visio", "sur place"], help="Type de consultation")
     parser.add_argument("--price-min", type=int, help="Prix minimum (€)")
@@ -247,7 +260,7 @@ if __name__ == "__main__":
 
 
     data = scrape_doctolib(
-        args.query, args.location, args.max, args.start, args.end,
+        args.query, args.location, args.max, args.language, args.disponibility,
         args.assurance, args.consultation, args.price_min, args.price_max, args.address_filter
     )
     save_csv(data)
