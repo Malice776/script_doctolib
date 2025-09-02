@@ -20,7 +20,8 @@ def save_csv(data, filename="doctolib.csv"):
         writer.writerows(data)
 
 
-def scrape_doctolib(query, location):
+def scrape_doctolib(query, location, max_results, start_date, end_date,
+                    assurance, consultation, price_min, price_max, address_filtern):
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service)
@@ -39,7 +40,7 @@ def scrape_doctolib(query, location):
         pass
     
 
-    # localisation   
+    # métier
     
     place_input = wait.until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "input.searchbar-input.searchbar-query-input"))
@@ -70,10 +71,13 @@ def scrape_doctolib(query, location):
 )
     place_input2.click()
 
+
+
     #liste des filstres
-        time.sleep(1)
         
-        time.sleep(60)
+
+    
+    time.sleep(60)
     results = []
     doctors = driver.find_elements(By.CSS_SELECTOR, "div.dl-search-result")[:max_results]
 
@@ -124,6 +128,18 @@ def scrape_doctolib(query, location):
     return results
 
 
+def save_csv(data, filename="doctolib.csv"):
+    if not data:
+        print("Aucun médecin trouvé.")
+        return
+    with open(filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=data[0].keys())
+        writer.writeheader()
+        writer.writerows(data)
+
+
+
+
 if __name__ == "__main__":
     import argparse
 
@@ -131,11 +147,20 @@ if __name__ == "__main__":
 
     parser.add_argument("--query", required=True, help="Requête médicale (ex: dermatologue)")
     parser.add_argument("--location", required=True, help="Lieu de recherche (ex: 75015, Paris)")
+    parser.add_argument("--max", type=int, default=10, help="Nombre max de médecins")
+    parser.add_argument("--start", help="Date début (JJ/MM/AAAA)")
+    parser.add_argument("--end", help="Date fin (JJ/MM/AAAA)")
+    parser.add_argument("--assurance", choices=["secteur 1", "secteur 2", "non conventionné"], help="Type d'assurance")
+    parser.add_argument("--consultation", choices=["visio", "sur place"], help="Type de consultation")
+    parser.add_argument("--price-min", type=int, help="Prix minimum (€)")
+    parser.add_argument("--price-max", type=int, help="Prix maximum (€)")
+    parser.add_argument("--address-filter", help="Filtre d'adresse (ex: Vaugirard, 75015, Boulogne)")
     args = parser.parse_args()
 
 
     data = scrape_doctolib(
-        args.query, args.location
+        args.query, args.location, args.max, args.start, args.end,
+        args.assurance, args.consultation, args.price_min, args.price_max, args.address_filter
     )
     save_csv(data)
 
