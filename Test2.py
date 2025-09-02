@@ -113,7 +113,7 @@ def scrape_doctolib(query, location, max_results, start_date, end_date,
                         }
                         month = month_dict.get(month_str)
                         if not month:
-                            continue
+                            return
 
                         year = datetime.datetime.now().year
                         date_obj = dt(year, month, int(day))
@@ -121,11 +121,11 @@ def scrape_doctolib(query, location, max_results, start_date, end_date,
                         if start_date:
                             start = dt.strptime(start_date, "%d/%m/%Y")
                             if date_obj < start:
-                                continue
+                                return
                         if end_date:
                             end = dt.strptime(end_date, "%d/%m/%Y")
                             if date_obj > end:
-                                continue
+                                return
                 except Exception as e:
                     print(f"Erreur lors du filtrage par date : {e}")
 
