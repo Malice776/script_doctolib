@@ -21,7 +21,8 @@ def save_csv(data, filename="doctolib.csv"):
 
 
 def scrape_doctolib(query, location, max_results, start_date, end_date,
-                    assurance, consultation, price_min, price_max, address_filtern):
+                    assurance, consultation, price_min, price_max, address_filter): 
+
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service)
@@ -74,7 +75,61 @@ def scrape_doctolib(query, location, max_results, start_date, end_date,
 
 
     #liste des filstres
-        
+
+    if assurance:
+        try:
+            if assurance.lower() == "secteur 1":
+                driver.find_element(By.XPATH, "//label[contains(., 'Secteur 1')]").click()
+            elif assurance.lower() == "secteur 2":
+                driver.find_element(By.XPATH, "//label[contains(., 'Secteur 2')]").click()
+            elif assurance.lower() == "non conventionné":
+                driver.find_element(By.XPATH, "//label[contains(., 'Non conventionné')]").click()
+        except Exception as e:
+            print(f"Erreur en sélectionnant l'assurance : {e}")
+       
+    if consultation:
+        try:
+            if consultation.lower() == "visio":
+                driver.find_element(By.XPATH, "//label[contains(., 'Consultation vidéo')]").click()
+            elif consultation.lower() == "sur place":
+                driver.find_element(By.XPATH, "//label[contains(., 'En cabinet')]").click()
+        except Exception as e:
+            print(f"Erreur en sélectionnant le type de consultation : {e}")
+
+            if start_date or end_date:
+                try:
+                    import datetime
+                    from datetime import datetime as dt
+
+                    # Exemple : 'Disponibilités le ven. 12 sept. à 09:00'
+                    dispo_date_match = re.search(r"(\d{1,2}) (\w+) à", availability)
+                    if dispo_date_match:
+                        day = dispo_date_match.group(1)
+                        month_str = dispo_date_match.group(2).lower()
+                        month_dict = {
+                            "janv.": 1, "févr.": 2, "mars": 3, "avr.": 4, "mai": 5,
+                            "juin": 6, "juil.": 7, "août": 8, "sept.": 9,
+                            "oct.": 10, "nov.": 11, "déc.": 12
+                        }
+                        month = month_dict.get(month_str)
+                        if not month:
+                            continue
+
+                        year = datetime.datetime.now().year
+                        date_obj = dt(year, month, int(day))
+
+                        if start_date:
+                            start = dt.strptime(start_date, "%d/%m/%Y")
+                            if date_obj < start:
+                                continue
+                        if end_date:
+                            end = dt.strptime(end_date, "%d/%m/%Y")
+                            if date_obj > end:
+                                continue
+                except Exception as e:
+                    print(f"Erreur lors du filtrage par date : {e}")
+
+
 
     
     time.sleep(60)
