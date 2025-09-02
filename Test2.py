@@ -96,6 +96,19 @@ def scrape_doctolib(query, location, max_results, start_date, end_date,
         except Exception as e:
             print(f"Erreur en sélectionnant la disponibilité : {e}")
 
+    if language:
+        try:
+            if language.lower() == "Francais":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2u:']"))).click()
+            elif language.lower() == "Anglais":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2q:']"))).click()
+            elif language.lower() == "Allemand":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r30:']"))).click()
+            elif language.lower() == "Espagnol":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2t:']"))).click()   
+        except Exception as e:
+            print(f"Erreur en sélectionnant la disponibilité : {e}")
+
     # if assurance:
     #     try:
     #         if assurance.lower() == "secteur 1":
