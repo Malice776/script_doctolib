@@ -114,7 +114,8 @@ def scrape_doctolib(query, location, max_results, language, disponibility,
             if consultation.lower() == "visio":
                 wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r3b:']"))).click()
             else :
-                wait.until(EC.element_to_be_clickable((By.CSS, "button.Tappable-inactive.dl-button-primary.dl-button.dl-button-size-medium"))).click()
+                print(f"fin filtre")
+                # wait.until(EC.element_to_be_clickable((By.CSS, "button.Tappable-inactive.dl-button-primary.dl-button.dl-button-size-medium"))).click()
                 pass
               
         except Exception as e:
