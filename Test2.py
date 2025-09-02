@@ -79,60 +79,75 @@ def scrape_doctolib(query, location, max_results, start_date, end_date,
 
     #liste des filstres
 
-    time.sleep(3)  #
+    time.sleep(3)  
 
-    if assurance:
+    # Appliquer les filtres
+
+    if disponibility:
         try:
-            if assurance.lower() == "secteur 1":
-                wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Secteur 1']"))).click()
-            elif assurance.lower() == "secteur 2":
-                wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Secteur 2']"))).click()
-            elif assurance.lower() == "non conventionné":
-                wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Non conventionné']"))).click()
+            if disponibility.lower() == "aujourd'hui":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2k:']"))).click()
+            elif disponibility.lower() == "dans les 3 prochains jours":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2l:']"))).click()
+            elif disponibility.lower() == "dans les 7 prochains joure":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2m:']"))).click()
+            elif disponibility.lower() == "dans les 14 prochains joure":
+                wait.until(EC.element_to_be_clickable((By.XPATH, "//label[@for='input_:r2n:']"))).click()   
         except Exception as e:
-            print(f"Erreur en sélectionnant l'assurance : {e}")
+            print(f"Erreur en sélectionnant la disponibilité : {e}")
 
-    if consultation:
-        try:
-            if consultation.lower() == "visio":
-                wait.until(EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'Consultation vidéo')]"))).click()
-            elif consultation.lower() == "sur place":
-                wait.until(EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'En cabinet')]"))).click()
-        except Exception as e:
-            print(f"Erreur en sélectionnant le type de consultation : {e}")
+    # if assurance:
+    #     try:
+    #         if assurance.lower() == "secteur 1":
+    #             wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Secteur 1']"))).click()
+    #         elif assurance.lower() == "secteur 2":
+    #             wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Secteur 2']"))).click()
+    #         elif assurance.lower() == "non conventionné":
+    #             wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Non conventionné']"))).click()
+    #     except Exception as e:
+    #         print(f"Erreur en sélectionnant l'assurance : {e}")
 
-    if start_date or end_date:
-                    try:
-                        import datetime
-                        from datetime import datetime as dt
+    # if consultation:
+    #     try:
+    #         if consultation.lower() == "visio":
+    #             wait.until(EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'Consultation vidéo')]"))).click()
+    #         elif consultation.lower() == "sur place":
+    #             wait.until(EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'En cabinet')]"))).click()
+    #     except Exception as e:
+    #         print(f"Erreur en sélectionnant le type de consultation : {e}")
 
-                        # Exemple : 'Disponibilités le ven. 12 sept. à 09:00'
-                        dispo_date_match = re.search(r"(\d{1,2}) (\w+) à", availability)
-                        if dispo_date_match:
-                            day = dispo_date_match.group(1)
-                            month_str = dispo_date_match.group(2).lower()
-                            month_dict = {
-                                "janv.": 1, "févr.": 2, "mars": 3, "avr.": 4, "mai": 5,
-                                "juin": 6, "juil.": 7, "août": 8, "sept.": 9,
-                                "oct.": 10, "nov.": 11, "déc.": 12
-                            }
-                            month = month_dict.get(month_str)
-                            if not month:
-                                return
+    # if start_date or end_date:
+    #                 try:
+    #                     import datetime
+    #                     from datetime import datetime as dt
 
-                            year = datetime.datetime.now().year
-                            date_obj = dt(year, month, int(day))
+    #                     # Exemple : 'Disponibilités le ven. 12 sept. à 09:00'
+    #                     dispo_date_match = re.search(r"(\d{1,2}) (\w+) à", availability)
+    #                     if dispo_date_match:
+    #                         day = dispo_date_match.group(1)
+    #                         month_str = dispo_date_match.group(2).lower()
+    #                         month_dict = {
+    #                             "janv.": 1, "févr.": 2, "mars": 3, "avr.": 4, "mai": 5,
+    #                             "juin": 6, "juil.": 7, "août": 8, "sept.": 9,
+    #                             "oct.": 10, "nov.": 11, "déc.": 12
+    #                         }
+    #                         month = month_dict.get(month_str)
+    #                         if not month:
+    #                             return
 
-                            if start_date:
-                                start = dt.strptime(start_date, "%d/%m/%Y")
-                                if date_obj < start:
-                                    return
-                            if end_date:
-                                end = dt.strptime(end_date, "%d/%m/%Y")
-                                if date_obj > end:
-                                    return
-                    except Exception as e:
-                        print(f"Erreur lors du filtrage par date : {e}")           
+    #                         year = datetime.datetime.now().year
+    #                         date_obj = dt(year, month, int(day))
+
+    #                         if start_date:
+    #                             start = dt.strptime(start_date, "%d/%m/%Y")
+    #                             if date_obj < start:
+    #                                 return
+    #                         if end_date:
+    #                             end = dt.strptime(end_date, "%d/%m/%Y")
+    #                             if date_obj > end:
+    #                                 return
+    #                 except Exception as e:
+    #                     print(f"Erreur lors du filtrage par date : {e}")           
 
 
 
